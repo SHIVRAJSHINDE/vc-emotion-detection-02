@@ -4,29 +4,15 @@ import pickle
 import json
 from sklearn.metrics import accuracy_score, precision_score, recall_score, roc_auc_score
 import logging
+from src.utils.main import utils
+
 
 class ModelEvaluator:
     def __init__(self, model_path: str, data_path: str, metrics_save_path: str, log_file: str):
         self.model_path = model_path
         self.data_path = data_path
         self.metrics_save_path = metrics_save_path
-        
-        # Initialize logger
-        self.logger = logging.getLogger('model_evaluation')
-        self.logger.setLevel('DEBUG')
-
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel('DEBUG')
-
-        file_handler = logging.FileHandler(log_file)
-        file_handler.setLevel('ERROR')
-
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        console_handler.setFormatter(formatter)
-        file_handler.setFormatter(formatter)
-
-        self.logger.addHandler(console_handler)
-        self.logger.addHandler(file_handler)
+        self.logger = utils._setup_logger(self)
 
     def load_model(self):
         """Load the trained model from a file."""

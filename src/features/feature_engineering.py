@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import os
 from sklearn.feature_extraction.text import CountVectorizer
-import yaml
-import logging
+
+from src.utils.main import utils
 
 class FeatureEngineering:
     def __init__(self, params_path: str, train_data_path: str, test_data_path: str, output_path: str):
@@ -12,48 +12,13 @@ class FeatureEngineering:
         self.train_data_path = train_data_path
         self.test_data_path = test_data_path
         self.output_path = output_path
-        self.logger = self._setup_logger()
-        self.params = self.load_params()
+
+        self.logger = utils._setup_logger(self)
+        self.params = utils.load_yaml_File(self,params_path)
 
         # Retrieve max_features parameter from the loaded YAML
         self.max_features = self.params['feature_engineering']['max_features']
 
-    def _setup_logger(self):
-        """Set up the logger for the class."""
-        logger = logging.getLogger('feature_engineering')
-        logger.setLevel('DEBUG')
-
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel('DEBUG')
-
-        file_handler = logging.FileHandler('feature_engineering_errors.log')
-        file_handler.setLevel('ERROR')
-
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        console_handler.setFormatter(formatter)
-        file_handler.setFormatter(formatter)
-
-        logger.addHandler(console_handler)
-        logger.addHandler(file_handler)
-
-        return logger
-
-    def load_params(self) -> dict:
-        """Load parameters from a YAML file."""
-        try:
-            with open(self.params_path, 'r') as file:
-                params = yaml.safe_load(file)
-            self.logger.debug('Parameters retrieved from %s', self.params_path)
-            return params
-        except FileNotFoundError:
-            self.logger.error('File not found: %s', self.params_path)
-            raise
-        except yaml.YAMLError as e:
-            self.logger.error('YAML error: %s', e)
-            raise
-        except Exception as e:
-            self.logger.error('Unexpected error: %s', e)
-            raise
 
     def load_data(self, file_path: str) -> pd.DataFrame:
         """Load data from a CSV file."""

@@ -2,48 +2,20 @@ import numpy as np
 import pandas as pd
 import pickle
 from sklearn.ensemble import GradientBoostingClassifier
-import yaml
-import logging
+
+from src.utils.main import utils
+
 
 class ModelBuilder:
+
+
     def __init__(self, params_path: str, data_path: str, model_save_path: str, log_file: str):
         self.params_path = params_path
         self.data_path = data_path
         self.model_save_path = model_save_path
-        
-        # Initialize logger
-        self.logger = logging.getLogger('model_building')
-        self.logger.setLevel('DEBUG')
 
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel('DEBUG')
-
-        file_handler = logging.FileHandler(log_file)
-        file_handler.setLevel('ERROR')
-
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        console_handler.setFormatter(formatter)
-        file_handler.setFormatter(formatter)
-
-        self.logger.addHandler(console_handler)
-        self.logger.addHandler(file_handler)
-
-    def load_params(self) -> dict:
-        """Load parameters from a YAML file."""
-        try:
-            with open(self.params_path, 'r') as file:
-                params = yaml.safe_load(file)
-            self.logger.debug('Parameters retrieved from %s', self.params_path)
-            return params
-        except FileNotFoundError:
-            self.logger.error('File not found: %s', self.params_path)
-            raise
-        except yaml.YAMLError as e:
-            self.logger.error('YAML error: %s', e)
-            raise
-        except Exception as e:
-            self.logger.error('Unexpected error: %s', e)
-            raise
+        self.logger = utils._setup_logger(self)
+        self.params = utils.load_yaml_File(self,params_path)
 
     def load_data(self) -> pd.DataFrame:
         """Load data from a CSV file."""
@@ -82,7 +54,7 @@ class ModelBuilder:
     def build_and_save_model(self):
         """The full process of loading data, training, and saving the model."""
         try:
-            params = self.load_params()['model_building']
+            params = self.params['model_building']
 
             train_data = self.load_data()
             X_train = train_data.iloc[:, :-1].values

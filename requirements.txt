@@ -102,3 +102,4 @@ voluptuous==0.14.2
 wcwidth==0.2.13
 yarl==1.9.4
 zc.lockfile==3.0.post1
+-e .

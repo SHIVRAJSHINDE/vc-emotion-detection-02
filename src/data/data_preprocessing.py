@@ -6,7 +6,9 @@ import nltk
 import string
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-import logging
+
+from src.utils.main import utils
+
 
 class TextNormalizer:
     def __init__(self, data_path: str, raw_data_path: str, processed_data_path: str):
@@ -14,31 +16,14 @@ class TextNormalizer:
         self.data_path = data_path
         self.raw_data_path = raw_data_path
         self.processed_data_path = processed_data_path
-        self.logger = self._setup_logger()
+        self.logger = utils._setup_logger(self)
+        
+
         
         # Downloading necessary NLTK data
         nltk.download('wordnet')
         nltk.download('stopwords')
 
-    def _setup_logger(self):
-        """Set up the logger."""
-        logger = logging.getLogger('data_transformation')
-        logger.setLevel('DEBUG')
-
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel('DEBUG')
-
-        file_handler = logging.FileHandler('transformation_errors.log')
-        file_handler.setLevel('ERROR')
-
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        console_handler.setFormatter(formatter)
-        file_handler.setFormatter(formatter)
-
-        logger.addHandler(console_handler)
-        logger.addHandler(file_handler)
-
-        return logger
 
     def lemmatization(self, text):
         """Lemmatize the text."""
