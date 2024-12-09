@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import os
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 from src.utils.main import utils
 
@@ -34,10 +34,10 @@ class FeatureEngineering:
             self.logger.error('Unexpected error occurred while loading the data: %s', e)
             raise
 
-    def apply_count_vectorizer(self, train_data: pd.DataFrame, test_data: pd.DataFrame) -> tuple:
+    def apply_TfidfVectorizer(self, train_data: pd.DataFrame, test_data: pd.DataFrame) -> tuple:
         """Apply CountVectorizer to the data."""
         try:
-            vectorizer = CountVectorizer(max_features=self.max_features)
+            vectorizer = TfidfVectorizer(max_features=self.max_features)
 
             X_train = train_data['content'].values
             y_train = train_data['sentiment'].values
@@ -78,7 +78,7 @@ class FeatureEngineering:
             test_data = self.load_data(self.test_data_path)
 
             # Apply CountVectorizer to the data
-            train_df, test_df = self.apply_count_vectorizer(train_data, test_data)
+            train_df, test_df = self.apply_TfidfVectorizer(train_data, test_data)
 
             # Save processed data
             self.save_data(train_df, os.path.join(self.output_path, "train_tfidf.csv"))
